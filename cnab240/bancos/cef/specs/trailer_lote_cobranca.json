@@ -60,8 +60,7 @@
       "nome": "cobrancaCaucionada_quantidade_titulos",
       "posicao_inicio": 47,
       "posicao_fim": 52,
-      "formato": "num",
-      "default": 1
+      "formato": "num"
     },
 
     "09.5": {

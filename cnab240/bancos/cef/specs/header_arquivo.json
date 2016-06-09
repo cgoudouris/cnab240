@@ -70,7 +70,7 @@
     },
 
     "10.0": {
-      "nome": "cedente_codigo_codCedente",
+      "nome": "cedente_codigo",
       "posicao_inicio": 59,
       "posicao_fim": 64,
       "formato": "num"
@@ -103,7 +103,8 @@
       "nome": "nome_do_banco",
       "posicao_inicio": 103,
       "posicao_fim": 132,
-      "formato": "alfa"
+      "formato": "alfa",
+      "default": "CAIXA ECONOMICA FEDERAL"
     },
 
     "15.0": {
@@ -166,10 +167,11 @@
     },
 
     "23.0": {
-      "nome": "reservado_cedente_campo23",
+      "nome": "tipo_remessa",
       "posicao_inicio": 192,
       "posicao_fim": 211,
-      "formato": "alfa"
+      "formato": "alfa",
+      "default": "REMESSA-TESTE"
     },
 
     "24.0": {

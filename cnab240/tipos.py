@@ -5,6 +5,7 @@ import importlib
 from datetime import datetime
 from cnab240 import errors
 
+from decimal import Decimal
 
 class Evento(object):
 
@@ -95,8 +96,24 @@ class Lote(object):
             raise TypeError
 
         self._eventos.append(evento)
+
         if self.trailer != None and hasattr(self.trailer, 'quantidade_registros'):
             self.trailer.quantidade_registros += len(evento)
+
+        if self.trailer != None and hasattr(self.trailer, 'cobrancasimples_quantidade_titulos'):
+            if self.trailer.cobrancasimples_quantidade_titulos:
+                self.trailer.cobrancasimples_quantidade_titulos = int(self.trailer.cobrancasimples_quantidade_titulos) + 1
+            else:
+                self.trailer.cobrancasimples_quantidade_titulos = 1
+
+        if self.trailer != None and hasattr(self.trailer, 'cobrancasimples_valor_titulos'):
+            for e in evento.segmentos:
+                if hasattr(e, 'valor_titulo'):
+                    if self.trailer.cobrancasimples_valor_titulos:
+                        self.trailer.cobrancasimples_valor_titulos= Decimal(self.trailer.cobrancasimples_valor_titulos) + Decimal(e.valor_titulo)
+                    else:
+                        self.trailer.cobrancasimples_valor_titulos = Decimal(e.valor_titulo)
+
         self.atualizar_codigo_registros()
 
         if self._codigo:
@@ -234,10 +251,13 @@ class Arquivo(object):
         lote_cobranca = self.encontrar_lote(codigo_evento)
 
         if lote_cobranca is None:
-            header = self.banco.registros.HeaderLoteCobranca(**self.header.todict())
+            #header = self.banco.registros.HeaderLoteCobranca(**self.header.todict())
+            header = self.banco.registros.HeaderLoteCobranca(**kwargs)
             trailer = self.banco.registros.TrailerLoteCobranca()
             lote_cobranca = Lote(self.banco, header, trailer)
             self.adicionar_lote(lote_cobranca)
+
+            lote_cobranca.header.servico_servico = codigo_evento
 
             if header.controlecob_numero is None:
                 header.controlecob_numero = int('{0}{1:02}'.format(
