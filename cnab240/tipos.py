@@ -260,9 +260,7 @@ class Arquivo(object):
             lote_cobranca.header.servico_servico = codigo_evento
 
             if header.controlecob_numero is None:
-                header.controlecob_numero = int('{0}{1:02}'.format(
-                    self.header.arquivo_sequencia,
-                    lote_cobranca.codigo))
+                header.controlecob_numero = int(self.header.arquivo_sequencia)
 
             if header.controlecob_data_gravacao is None:
                 header.controlecob_data_gravacao = self.header.arquivo_data_de_geracao

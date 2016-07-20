@@ -138,14 +138,14 @@
     },
 
     "18.1": {
-      "nome": "informacao1",
+      "nome": "mensagem_lote_1",
       "posicao_inicio": 104,
       "posicao_fim": 143,
       "formato": "alfa"
     },
 
     "19.1": {
-      "nome": "informacao2",
+      "nome": "mensagem_lote_2",
       "posicao_inicio": 144,
       "posicao_fim": 183,
       "formato": "alfa"
