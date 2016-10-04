@@ -197,7 +197,7 @@ class Arquivo(object):
                 codigo_evento = linha[15:17]
 
                 # FIXME - Interpretation of 28 event for collection fees
-                if tipo_segmento == 'T' and codigo_evento != 28:
+                if tipo_segmento == 'T' and codigo_evento != '28':
                     seg_t = self.banco.registros.SegmentoT()
                     seg_t.carregar(linha)
 
@@ -206,7 +206,7 @@ class Arquivo(object):
                     evento_aberto._segmentos.append(seg_t)
 
                 # FIXME - Interpretation of 28 event for collection fees
-                elif tipo_segmento == 'U' and codigo_evento != 28:
+                elif tipo_segmento == 'U' and codigo_evento != '28':
                     seg_u = self.banco.registros.SegmentoU()
                     seg_u.carregar(linha)
                     evento_aberto._segmentos.append(seg_u)
