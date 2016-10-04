@@ -205,7 +205,8 @@ class Arquivo(object):
                     lote_aberto._eventos.append(evento_aberto)
                     evento_aberto._segmentos.append(seg_t)
 
-                elif tipo_segmento == 'U':
+                # FIXME - Interpretation of 28 event for collection fees
+                elif tipo_segmento == 'U' and codigo_evento != 28:
                     seg_u = self.banco.registros.SegmentoU()
                     seg_u.carregar(linha)
                     evento_aberto._segmentos.append(seg_u)
