@@ -221,6 +221,28 @@ class Arquivo(object):
                     lote_aberto._eventos.append(evento_aberto)
                     evento_aberto._segmentos.append(seg_e)
 
+                if tipo_segmento == 'P':
+                    seg_p = self.banco.registros.SegmentoP()
+                    seg_p.carregar(linha)
+
+                    evento_aberto = Evento(self.banco, int(codigo_evento))
+                    lote_aberto._eventos.append(evento_aberto)
+                    evento_aberto._segmentos.append(seg_p)
+
+                if tipo_segmento == 'Q':
+                    seg_q = self.banco.registros.SegmentoQ()
+                    seg_q.carregar(linha)
+
+                    lote_aberto._eventos.append(evento_aberto)
+                    evento_aberto._segmentos.append(seg_q)
+
+                if tipo_segmento == 'R':
+                    seg_r = self.banco.registros.SegmentoR()
+                    seg_r.carregar(linha)
+
+                    lote_aberto._eventos.append(evento_aberto)
+                    evento_aberto._segmentos.append(seg_r)
+
             elif tipo_registro == '5':
                 if trailer_lote is not None:
                     lote_aberto.trailer.carregar(linha)
