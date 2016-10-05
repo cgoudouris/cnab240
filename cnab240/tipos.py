@@ -232,16 +232,13 @@ class Arquivo(object):
                 if tipo_segmento == 'Q':
                     seg_q = self.banco.registros.SegmentoQ()
                     seg_q.carregar(linha)
-
-                    lote_aberto._eventos.append(evento_aberto)
                     evento_aberto._segmentos.append(seg_q)
 
                 if tipo_segmento == 'R':
                     seg_r = self.banco.registros.SegmentoR()
                     seg_r.carregar(linha)
-
-                    lote_aberto._eventos.append(evento_aberto)
                     evento_aberto._segmentos.append(seg_r)
+                    evento_aberto = None
 
             elif tipo_registro == '5':
                 if trailer_lote is not None:
