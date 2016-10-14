@@ -263,7 +263,8 @@ class Arquivo(object):
         evento.adicionar_segmento(seg_p)
 
         seg_q = self.banco.registros.SegmentoQ(**kwargs)
-        evento.adicionar_segmento(seg_q)
+        if seg_q.necessario():
+            evento.adicionar_segmento(seg_q)
 
         seg_r = self.banco.registros.SegmentoR(**kwargs)
         if seg_r.necessario():
