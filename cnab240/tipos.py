@@ -17,8 +17,8 @@ class Evento(object):
 
     def adicionar_segmento(self, segmento):
         self._segmentos.append(segmento)
-        for segmento in self._segmentos:
-            segmento.servico_codigo_movimento = self.codigo_evento
+        #for segmento in self._segmentos:
+        #    segmento.servico_codigo_movimento = self.codigo_evento
 
     @property
     def segmentos(self):
