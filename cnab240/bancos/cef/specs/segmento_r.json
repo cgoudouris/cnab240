@@ -48,10 +48,11 @@
     },
 
     "07.3R": {
-      "nome": "servico_codigoMovimento",
+      "nome": "servico_codigo_moviment",
       "posicao_inicio": 16,
       "posicao_fim": 17,
-      "formato": "num"
+      "formato": "num",
+      "default": 1
     },
 
     "08.3R": {
@@ -73,7 +74,8 @@
       "posicao_inicio": 27,
       "posicao_fim": 41,
       "formato": "num",
-      "decimais": 2
+      "decimais": 2,
+      "default": 0
     },
 
     "11.3R": {
@@ -95,7 +97,8 @@
       "posicao_inicio": 51,
       "posicao_fim": 65,
       "formato": "num",
-      "decimais": 2
+      "decimais": 2,
+      "default": 0
     },
 
     "14.3R": {

@@ -5,6 +5,7 @@ import importlib
 from datetime import datetime
 from cnab240 import errors
 
+from decimal import Decimal
 
 class Evento(object):
 
@@ -16,8 +17,8 @@ class Evento(object):
 
     def adicionar_segmento(self, segmento):
         self._segmentos.append(segmento)
-        for segmento in self._segmentos:
-            segmento.servico_codigo_movimento = self.codigo_evento
+        #for segmento in self._segmentos:
+        #    segmento.servico_codigo_movimento = self.codigo_evento
 
     @property
     def segmentos(self):
@@ -95,8 +96,24 @@ class Lote(object):
             raise TypeError
 
         self._eventos.append(evento)
+
         if self.trailer != None and hasattr(self.trailer, 'quantidade_registros'):
             self.trailer.quantidade_registros += len(evento)
+
+        if self.trailer != None and hasattr(self.trailer, 'cobrancasimples_quantidade_titulos'):
+            if self.trailer.cobrancasimples_quantidade_titulos:
+                self.trailer.cobrancasimples_quantidade_titulos = int(self.trailer.cobrancasimples_quantidade_titulos) + 1
+            else:
+                self.trailer.cobrancasimples_quantidade_titulos = 1
+
+        if self.trailer != None and hasattr(self.trailer, 'cobrancasimples_valor_titulos'):
+            for e in evento.segmentos:
+                if hasattr(e, 'valor_titulo'):
+                    if self.trailer.cobrancasimples_valor_titulos:
+                        self.trailer.cobrancasimples_valor_titulos= Decimal(self.trailer.cobrancasimples_valor_titulos) + Decimal(e.valor_titulo)
+                    else:
+                        self.trailer.cobrancasimples_valor_titulos = Decimal(e.valor_titulo)
+
         self.atualizar_codigo_registros()
 
         if self._codigo:
@@ -179,7 +196,8 @@ class Arquivo(object):
                 tipo_segmento = linha[13]
                 codigo_evento = linha[15:17]
 
-                if tipo_segmento == 'T':
+                # FIXME - Interpretation of 28 event for collection fees
+                if tipo_segmento == 'T' and codigo_evento != '28':
                     seg_t = self.banco.registros.SegmentoT()
                     seg_t.carregar(linha)
 
@@ -187,7 +205,8 @@ class Arquivo(object):
                     lote_aberto._eventos.append(evento_aberto)
                     evento_aberto._segmentos.append(seg_t)
 
-                elif tipo_segmento == 'U':
+                # FIXME - Interpretation of 28 event for collection fees
+                elif tipo_segmento == 'U' and codigo_evento != '28':
                     seg_u = self.banco.registros.SegmentoU()
                     seg_u.carregar(linha)
                     evento_aberto._segmentos.append(seg_u)
@@ -201,6 +220,25 @@ class Arquivo(object):
                     evento_aberto = Evento(self.banco, int(codigo_evento))
                     lote_aberto._eventos.append(evento_aberto)
                     evento_aberto._segmentos.append(seg_e)
+
+                if tipo_segmento == 'P':
+                    seg_p = self.banco.registros.SegmentoP()
+                    seg_p.carregar(linha)
+
+                    evento_aberto = Evento(self.banco, int(codigo_evento))
+                    lote_aberto._eventos.append(evento_aberto)
+                    evento_aberto._segmentos.append(seg_p)
+
+                if tipo_segmento == 'Q':
+                    seg_q = self.banco.registros.SegmentoQ()
+                    seg_q.carregar(linha)
+                    evento_aberto._segmentos.append(seg_q)
+
+                if tipo_segmento == 'R':
+                    seg_r = self.banco.registros.SegmentoR()
+                    seg_r.carregar(linha)
+                    evento_aberto._segmentos.append(seg_r)
+                    evento_aberto = None
 
             elif tipo_registro == '5':
                 if trailer_lote is not None:
@@ -225,7 +263,8 @@ class Arquivo(object):
         evento.adicionar_segmento(seg_p)
 
         seg_q = self.banco.registros.SegmentoQ(**kwargs)
-        evento.adicionar_segmento(seg_q)
+        if seg_q.necessario():
+            evento.adicionar_segmento(seg_q)
 
         seg_r = self.banco.registros.SegmentoR(**kwargs)
         if seg_r.necessario():
@@ -234,15 +273,16 @@ class Arquivo(object):
         lote_cobranca = self.encontrar_lote(codigo_evento)
 
         if lote_cobranca is None:
-            header = self.banco.registros.HeaderLoteCobranca(**self.header.todict())
+            #header = self.banco.registros.HeaderLoteCobranca(**self.header.todict())
+            header = self.banco.registros.HeaderLoteCobranca(**kwargs)
             trailer = self.banco.registros.TrailerLoteCobranca()
             lote_cobranca = Lote(self.banco, header, trailer)
             self.adicionar_lote(lote_cobranca)
 
+            lote_cobranca.header.servico_servico = codigo_evento
+
             if header.controlecob_numero is None:
-                header.controlecob_numero = int('{0}{1:02}'.format(
-                    self.header.arquivo_sequencia,
-                    lote_cobranca.codigo))
+                header.controlecob_numero = int(self.header.arquivo_sequencia)
 
             if header.controlecob_data_gravacao is None:
                 header.controlecob_data_gravacao = self.header.arquivo_data_de_geracao

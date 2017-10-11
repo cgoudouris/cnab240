@@ -90,5 +90,3 @@
       "posicao_fim": 240,
       "formato": "alfa"
     }
-  }
-}
